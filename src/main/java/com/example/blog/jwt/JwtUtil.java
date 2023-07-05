@@ -1,2 +1,4 @@
-package com.example.blog.jwt;public class JwtUtil {
+package com.example.blog.jwt;
+
+public class JwtUtil {
 }

@@ -1,2 +1,4 @@
-package com.example.blog.dto;public class LoginRequestDto {
+package com.example.blog.dto;
+
+public class LoginRequestDto {
 }

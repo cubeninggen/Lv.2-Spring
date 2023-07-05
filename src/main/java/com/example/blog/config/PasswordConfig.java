@@ -1,2 +1,4 @@
-package com.example.blog.config;public class PasswordConfig {
+package com.example.blog.config;
+
+public class PasswordConfig {
 }

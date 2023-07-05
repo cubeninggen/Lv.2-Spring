@@ -1,2 +1,4 @@
-package com.example.blog.entity;public class Timestamped {
+package com.example.blog.entity;
+
+public class Timestamped {
 }
