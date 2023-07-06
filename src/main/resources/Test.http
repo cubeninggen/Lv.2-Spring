@@ -1,0 +1,66 @@
+
+### 회원가입
+POST /api/auth/sign-up HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+"username": "user123245",
+"password": "1234aabea"
+}
+
+### 로그인
+POST /api/auth/login HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+  "username": "user1234",
+  "password": "1234aabbcc"
+}
+
+### 목록 조회
+GET /api/posts HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+
+### 글 작성
+POST /api/posts HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMTIzNCIsImV4cCI6MTY4ODY2MjMzOCwiaWF0IjoxNjg4NjU4NzM4fQ.LdSJft7vOji0ODrVr9quaFjHUAMyA-k8_NkqFEySVz8
+
+{
+  "title": "title1",
+  "content": "content1"
+}
+
+### 특정 게시물 조회
+GET /api/posts/1 HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMTIzNCIsImV4cCI6MTY4ODY2MjMzOCwiaWF0IjoxNjg4NjU4NzM4fQ.LdSJft7vOji0ODrVr9quaFjHUAMyA-k8_NkqFEySVz8
+
+
+
+### 수정
+PUT /api/posts/1 HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMTIzNCIsImV4cCI6MTY4ODY2MjMzOCwiaWF0IjoxNjg4NjU4NzM4fQ.LdSJft7vOji0ODrVr9quaFjHUAMyA-k8_NkqFEySVz8
+
+
+{
+  "title": "Updated Post",
+  "content": "This is an updated post content."
+}
+
+### 삭제
+DELETE /api/posts/1 HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMTIzNCIsImV4cCI6MTY4ODY2MjMzOCwiaWF0IjoxNjg4NjU4NzM4fQ.LdSJft7vOji0ODrVr9quaFjHUAMyA-k8_NkqFEySVz8
+
+
+

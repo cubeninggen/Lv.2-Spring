@@ -4,16 +4,13 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -55,7 +52,7 @@ public class JwtUtil {
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 생성 시간에 대한 만료시간
                         .setIssuedAt(date) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
-                        .compact(); //Actually builds the JWT and serializes it to a compact, URL-safe string according to the JWT Compact
+                        .compact();
     }
 
     // 2. JWT 토큰을 받아올때 - substring

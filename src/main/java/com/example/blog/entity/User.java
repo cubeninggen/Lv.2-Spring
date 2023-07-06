@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "user")
 @NoArgsConstructor
 public class User {
-    // @Id Id 필드 생성 수정
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
