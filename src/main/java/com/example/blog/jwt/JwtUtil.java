@@ -1,8 +1,8 @@
 package com.example.blog.jwt;
 
+import com.example.blog.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 
 import org.slf4j.Logger;
@@ -14,6 +14,8 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
@@ -43,17 +45,22 @@ public class JwtUtil {
     public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
 
     // 1. JWT(토큰생성)
-    public String createToken(String username) {
+    public String createToken(User user) {
         Date date = new Date();
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("username", user.getUsername());
+        claims.put("isAdmin", user.isAdmin()); // isAdmin이라는 메서드가 있다고 가정합니다.
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(username) // 사용자 식별값(ID)
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 생성 시간에 대한 만료시간
-                        .setIssuedAt(date) // 발급일
-                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                        .setClaims(claims)
+                        .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+                        .setIssuedAt(date)
+                        .signWith(key, signatureAlgorithm)
                         .compact();
     }
+
 
     // 2. JWT 토큰을 받아올때 - substring
     public String substringToken(String tokenValue) {
@@ -87,5 +94,11 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(this.key).build().parseClaimsJws(token).getBody();
         // Jwt의 구조중 Payload(Body)부분에 토큰에 담긴 정보가 들어있다.
         // 정보의 한 조각을 클레임이라 부르고 key-value의 한 쌍으로 되어있음. 토큰에는 여러개의 클레임들을 넣을 수 있다.
+    }
+
+    // 5. 사용자가 관리자인지 확인
+    public boolean isAdmin(String token) {
+        Claims claims = getUserInfoFromToken(token);
+        return claims.containsKey("isAdmin") && (boolean) claims.get("isAdmin");
     }
 }
