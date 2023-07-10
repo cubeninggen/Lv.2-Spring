@@ -68,7 +68,7 @@ public class JwtUtil {
     // 3. JWT 검증
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token); // key로 token 검증
+            Jwts.parserBuilder().setSigningKey(this.key).build().parseClaimsJws(token); // key로 token 검증
             return true;
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
             logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
@@ -84,7 +84,7 @@ public class JwtUtil {
 
     // 4. JWT에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder().setSigningKey(this.key).build().parseClaimsJws(token).getBody();
         // Jwt의 구조중 Payload(Body)부분에 토큰에 담긴 정보가 들어있다.
         // 정보의 한 조각을 클레임이라 부르고 key-value의 한 쌍으로 되어있음. 토큰에는 여러개의 클레임들을 넣을 수 있다.
     }

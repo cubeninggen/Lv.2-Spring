@@ -1,10 +1,10 @@
 package com.example.blog.service;
 
-import com.example.blog.dto.MessageResponseDto;
-import com.example.blog.dto.PostRequestDto;
-import com.example.blog.dto.PostResponseDto;
+import com.example.blog.dto.*;
+import com.example.blog.entity.Comment;
 import com.example.blog.entity.Post;
 import com.example.blog.jwt.JwtUtil;
+import com.example.blog.repository.CommentRepository;
 import com.example.blog.repository.PostRepository;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
@@ -17,13 +17,14 @@ import java.util.List;
 @Service
 public class PostService {
     private PostRepository postRepository;
+    private CommentRepository commentRepository; // commentRepository 추가
     private JwtUtil jwtUtil;
 
-    public PostService(PostRepository postRepository, JwtUtil jwtUtil) {
+    public PostService(PostRepository postRepository, CommentRepository commentRepository, JwtUtil jwtUtil) {
         this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
         this.jwtUtil = jwtUtil;
     }
-
     /**
      * 게시물 생성 메소드
      * @param tokenValue JWT 토큰 값
@@ -131,4 +132,83 @@ public class PostService {
                 new IllegalArgumentException("선택한 포스트는 존재하지 않습니다.")
         );
     }
+
+    // 댓글 작성 메소드
+    public CommentResponseDto createComment(String tokenValue, Long postId, CommentRequestDto requestDto) {
+        String token = jwtUtil.substringToken(tokenValue);
+
+        if (!jwtUtil.validateToken(token)) {
+            throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
+        }
+
+        Claims info = jwtUtil.getUserInfoFromToken(token);
+        String username = info.getSubject();
+
+        Post post = findPostById(postId);
+
+        Comment comment = new Comment(requestDto.getContent(), username, post);
+        Comment savedComment = commentRepository.save(comment);
+
+        return new CommentResponseDto(savedComment);
+    }
+
+    // 댓글 수정 메소드
+    @Transactional
+    public CommentResponseDto updateComment(String tokenValue, Long commentId, CommentRequestDto requestDto) {
+        String token = jwtUtil.substringToken(tokenValue);
+
+        if (!jwtUtil.validateToken(token)) {
+            throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
+        }
+
+        Claims info = jwtUtil.getUserInfoFromToken(token);
+        String username = info.getSubject();
+
+        Comment comment = findCommentById(commentId);
+
+        if (!comment.getAuthor().equals(username)) {
+            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+        }
+
+        comment.setContent(requestDto.getContent());
+
+        return new CommentResponseDto(comment);
+    }
+
+    // 댓글 삭제 메소드
+    public ResponseEntity<MessageResponseDto> deleteComment(String tokenValue, Long postId, Long commentId) {
+        String token = jwtUtil.substringToken(tokenValue);
+
+        if (!jwtUtil.validateToken(token)) {
+            throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
+        }
+
+        Claims info = jwtUtil.getUserInfoFromToken(token);
+        String username = info.getSubject();
+
+
+        Comment comment = findCommentById(commentId);
+
+        if (!comment.getAuthor().equals(username)) {
+            throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
+        }
+
+        commentRepository.delete(comment);
+
+        return ResponseEntity.ok(new MessageResponseDto("댓글 삭제 성공", "200"));
+    }
+
+    // Helper method: Post 조회
+    private Post findPostById(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("선택한 게시물이 존재하지 않습니다."));
+    }
+
+    // Helper method: Comment 조회
+    private Comment findCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("선택한 댓글이 존재하지 않습니다."));
+    }
 }
+
+

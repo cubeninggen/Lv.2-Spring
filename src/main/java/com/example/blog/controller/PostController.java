@@ -1,11 +1,10 @@
 package com.example.blog.controller;
 
-import com.example.blog.dto.MessageResponseDto;
-import com.example.blog.dto.PostRequestDto;
-import com.example.blog.dto.PostResponseDto;
-import com.example.blog.jwt.JwtUtil;
+import com.example.blog.dto.*;
 import com.example.blog.service.PostService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,21 +32,48 @@ public class PostController {
 
     // 게시글 작성 API
     @PostMapping("/posts")
-    public PostResponseDto createPost(@RequestHeader(JwtUtil.AUTHORIZATION_HEADER) String tokenValue, @RequestBody PostRequestDto requestDto) {
+    public PostResponseDto createPost(@RequestHeader("Authorization") String tokenValue, @RequestBody PostRequestDto requestDto) {
         return postService.createPost(tokenValue, requestDto);
     }
-    //  요청 헤더에서 JWT 토큰 값을 매개변수로 받아온다.
-    //  JwtUtil.AUTHORIZATION_HEADER 는 JWT 토큰이 들어있는 헤더의 이름을 나타내는 상수이다.
 
     // 게시글 수정 API
     @PutMapping("/posts/{id}")
-    public PostResponseDto updatePost(@RequestHeader(JwtUtil.AUTHORIZATION_HEADER) String tokenValue, @PathVariable Long id, @RequestBody PostRequestDto requestDto) {
+    public PostResponseDto updatePost(@RequestHeader("Authorization") String tokenValue, @PathVariable Long id, @RequestBody PostRequestDto requestDto) {
         return postService.updatePost(tokenValue, id, requestDto);
     }
 
     // 게시글 삭제 API
     @DeleteMapping("/posts/{id}")
-    public ResponseEntity<MessageResponseDto> deletePost(@RequestHeader(JwtUtil.AUTHORIZATION_HEADER) String tokenValue, @PathVariable Long id) {
+    public ResponseEntity<MessageResponseDto> deletePost(@RequestHeader("Authorization") String tokenValue, @PathVariable Long id) {
         return postService.deletePost(tokenValue, id);
+    }
+
+    // 댓글 작성 API
+    @PostMapping("/posts/{postId}/comments")
+    public CommentResponseDto createComment(@RequestHeader("Authorization") String tokenValue, @PathVariable Long postId, @RequestBody CommentRequestDto requestDto) {
+        return postService.createComment(tokenValue, postId, requestDto);
+    }
+
+    // 댓글 수정 API
+    @PutMapping("/posts/{postId}/comments/{commentId}")
+    public CommentResponseDto updateComment(@RequestHeader("Authorization") String tokenValue, @PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentRequestDto requestDto) {
+        return postService.updateComment(tokenValue, commentId, requestDto);
+    }
+
+    // 댓글 삭제 API
+    @DeleteMapping("/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<MessageResponseDto> deleteComment(@RequestHeader("Authorization") String tokenValue, @PathVariable Long postId, @PathVariable Long commentId) {
+        return postService.deleteComment(tokenValue, postId, commentId);
+    }
+
+    // 예외 처리
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<MessageResponseDto> handleIllegalArgumentException(IllegalArgumentException e) {
+        return new ResponseEntity<>(new MessageResponseDto(e.getMessage(), "400"), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ResponseEntity<MessageResponseDto> handleMissingRequestHeaderException(MissingRequestHeaderException e) {
+        return new ResponseEntity<>(new MessageResponseDto("토큰이 유효하지 않습니다.", "400"), HttpStatus.BAD_REQUEST);
     }
 }
