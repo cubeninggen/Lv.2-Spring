@@ -3,6 +3,7 @@ package com.example.blog.service;
 import com.example.blog.dto.*;
 import com.example.blog.entity.Comment;
 import com.example.blog.entity.Post;
+import com.example.blog.entity.User;
 import com.example.blog.jwt.JwtUtil;
 import com.example.blog.repository.CommentRepository;
 import com.example.blog.repository.PostRepository;
@@ -16,22 +17,23 @@ import java.util.List;
 
 @Service
 public class PostService {
-    private PostRepository postRepository;
-    private CommentRepository commentRepository; // commentRepository 추가
-    private JwtUtil jwtUtil;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final JwtUtil jwtUtil;
 
     public PostService(PostRepository postRepository, CommentRepository commentRepository, JwtUtil jwtUtil) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.jwtUtil = jwtUtil;
     }
+
     /**
      * 게시물 생성 메소드
-     * @param tokenValue JWT 토큰 값
+     *
      * @param requestDto 게시물 생성 요청 DTO
      * @return 생성된 게시물의 응답 DTO
      */
-    public PostResponseDto createPost(String tokenValue, PostRequestDto requestDto) {
+    public PostResponseDto createPost(String tokenValue, PostRequestDto requestDto){
         String token = jwtUtil.substringToken(tokenValue);
 
         if (!jwtUtil.validateToken(token)) {
@@ -49,6 +51,7 @@ public class PostService {
 
     /**
      * 모든 게시물 조회 메소드
+     *
      * @return 모든 게시물의 응답 DTO 리스트
      */
     public List<PostResponseDto> getPosts() {
@@ -57,6 +60,7 @@ public class PostService {
 
     /**
      * 게시물 조회 메소드
+     *
      * @param id 게시물 ID
      * @return 조회된 게시물의 응답 DTO
      */
@@ -67,9 +71,10 @@ public class PostService {
 
     /**
      * 게시물 수정 메소드
-     * @param tokenValue JWT 토큰 값
-     * @param id 게시물 ID
-     * @param requestDto 게시물 수정 요청 DTO
+     *
+     * @param tokenValue  JWT 토큰 값
+     * @param id          게시물 ID
+     * @param requestDto  게시물 수정 요청 DTO
      * @return 수정된 게시물의 응답 DTO
      */
     @Transactional
@@ -85,7 +90,7 @@ public class PostService {
         Claims info = jwtUtil.getUserInfoFromToken(token);
         String username = info.getSubject();
 
-        if (!username.equals(post.getAuthor())) {
+        if (!username.equals(post.getUsername())) {
             throw new IllegalArgumentException("해당 게시글을 작성한 사용자가 아닙니다.");
         }
 
@@ -96,8 +101,9 @@ public class PostService {
 
     /**
      * 게시물 삭제 메소드
+     *
      * @param tokenValue JWT 토큰 값
-     * @param id 게시물 ID
+     * @param id         게시물 ID
      * @return 삭제 결과에 대한 응답 ResponseEntity
      */
     public ResponseEntity<MessageResponseDto> deletePost(String tokenValue, Long id) {
@@ -112,17 +118,18 @@ public class PostService {
         Claims info = jwtUtil.getUserInfoFromToken(token);
         String username = info.getSubject();
 
-        if (!username.equals(post.getAuthor())) {
+        if (!username.equals(post.getUsername())) {
             throw new IllegalArgumentException("해당 게시글을 작성한 사용자가 아닙니다.");
         }
 
         postRepository.delete(post);
 
-        return new ResponseEntity<MessageResponseDto>(new MessageResponseDto("게시글 삭제 성공", "200"), HttpStatus.OK);
+        return new ResponseEntity<>(new MessageResponseDto("게시글 삭제 성공", "200"), HttpStatus.OK);
     }
 
     /**
      * 게시물 조회 메소드 (내부적으로 사용)
+     *
      * @param id 게시물 ID
      * @return 조회된 게시물
      * @throws IllegalArgumentException 선택한 게시물이 존재하지 않을 경우 예외 발생
@@ -166,7 +173,7 @@ public class PostService {
 
         Comment comment = findCommentById(commentId);
 
-        if (!comment.getAuthor().equals(username)) {
+        if (!comment.getUsername().equals(username)) {
             throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
         }
 
@@ -189,7 +196,7 @@ public class PostService {
 
         Comment comment = findCommentById(commentId);
 
-        if (!comment.getAuthor().equals(username)) {
+        if (!comment.getUsername().equals(username)) {
             throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
         }
 
@@ -209,6 +216,6 @@ public class PostService {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("선택한 댓글이 존재하지 않습니다."));
     }
+
+
 }
-
-

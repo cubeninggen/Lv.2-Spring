@@ -21,8 +21,6 @@ public class SignUpRequestDto {
         this.username = username;
         this.password = password;
         this.roles = roles;
-    }
 
-    public SignUpRequestDto() {
     }
 }

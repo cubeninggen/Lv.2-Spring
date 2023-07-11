@@ -20,22 +20,22 @@ public class Comment extends Timestamped {
     private String content;
 
     @Column(nullable = false)
-    private String author;
+    private String username;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    public Comment(CommentRequestDto requestDto, String author, Post post) {
+    public Comment(CommentRequestDto requestDto, String username, Post post) {
         this.content = requestDto.getContent();
-        this.author = author;
+        this.username = username;
         this.post = post;
     }
 
     public Comment(String content, String username, Post post) {
         super();
         this.content = content;
-        this.author = username;
+        this.username = username;
         this.post = post;
     }
 

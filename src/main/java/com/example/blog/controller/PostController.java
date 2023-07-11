@@ -4,7 +4,6 @@ import com.example.blog.dto.*;
 import com.example.blog.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +15,7 @@ public class PostController {
 
     public PostController(PostService postService) {
         this.postService = postService;
+
     }
 
     // 게시글 목록 조회 API
@@ -69,11 +69,7 @@ public class PostController {
     // 예외 처리
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<MessageResponseDto> handleIllegalArgumentException(IllegalArgumentException e) {
-        return new ResponseEntity<>(new MessageResponseDto(e.getMessage(), "400"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new MessageResponseDto(e.getMessage(), "401"), HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(MissingRequestHeaderException.class)
-    public ResponseEntity<MessageResponseDto> handleMissingRequestHeaderException(MissingRequestHeaderException e) {
-        return new ResponseEntity<>(new MessageResponseDto("토큰이 유효하지 않습니다.", "400"), HttpStatus.BAD_REQUEST);
-    }
 }

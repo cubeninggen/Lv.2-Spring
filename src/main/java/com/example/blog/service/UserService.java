@@ -1,5 +1,6 @@
 package com.example.blog.service;
 
+import com.example.blog.dto.SignUpRequestDto;
 import com.example.blog.dto.LoginRequestDto;
 import com.example.blog.dto.MessageResponseDto;
 import com.example.blog.entity.User;
@@ -10,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Optional;
 
@@ -25,29 +28,35 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public ResponseEntity<MessageResponseDto> createUser(User signUpRequestDto) {
+    public ResponseEntity<MessageResponseDto> createUser(@RequestBody SignUpRequestDto signUpRequestDto) {
         String username = signUpRequestDto.getUsername();
-        String password = passwordEncoder.encode(signUpRequestDto.getPassword());
+        String password = signUpRequestDto.getPassword();
 
         // 회원 중복 확인
-        Optional<User> checkUsername = userRepository.findByUsername(username);
-        if (checkUsername.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+        if (existsByUsername(username)) {
+            return ResponseEntity.badRequest().body(new MessageResponseDto("중복된 사용자가 존재합니다.", HttpStatus.BAD_REQUEST.toString()));
         }
 
-        // 회원 등록
-        User user = new User(username, password);
-        user.setRoles(signUpRequestDto.getRoles()); // 역할 설정 및 isAdmin 값 설정
-        userRepository.save(user);
+        User user = new User(username, passwordEncoder.encode(password));
+        user.setRoles(signUpRequestDto.getRoles());
 
-        return ResponseEntity.ok(new MessageResponseDto("회원가입 성공!", HttpStatus.OK.toString()));
+        createUser(user);
+
+        return ResponseEntity.ok().body(new MessageResponseDto("회원가입 성공!", HttpStatus.OK.toString()));
     }
 
-    public ResponseEntity<MessageResponseDto> loginUser(LoginRequestDto requestDto) {
-        String username = requestDto.getUsername();
-        String password = requestDto.getPassword();
+
+
+    @PostMapping("/login")
+    public ResponseEntity<MessageResponseDto> loginUser(LoginRequestDto loginRequestDto) {
+        String username = loginRequestDto.getUsername();
+        String password = loginRequestDto.getPassword();
 
         // 사용자 확인
+        if (username == null) {
+            throw new IllegalArgumentException("사용자가 없습니다.");
+        }
+
         User user = getUserByUsername(username);
         if (user == null) {
             throw new IllegalArgumentException("사용자가 없습니다.");
@@ -59,7 +68,7 @@ public class UserService {
         }
 
         // JWT 생성
-        String token = jwtUtil.createToken(user);
+        String token = jwtUtil.createToken(username);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(JwtUtil.AUTHORIZATION_HEADER, token);
@@ -67,10 +76,19 @@ public class UserService {
         return new ResponseEntity<>(new MessageResponseDto("로그인 성공!", HttpStatus.OK.toString()), headers, HttpStatus.OK);
     }
 
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("사용자가 없습니다."));
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
+
+    public void createUser(User user) {
+        userRepository.save(user);
+    }
+
+    public User getUserByUsername(String username) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        return userOptional.orElseThrow(() -> new IllegalArgumentException("사용자가 없습니다."));
+    }
+
 
     public void grantAdminRole(Long userId) {
         User user = userRepository.findById(userId)

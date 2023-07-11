@@ -19,14 +19,14 @@ public class Post extends Timestamped{
     private Long id;
     @Column(name = "title", nullable = false)
     private String title;
-    @Column(name = "author", nullable = false)
-    private String author;
+    @Column(name = "username", nullable = false)
+    private String username;
     @Column(name = "content", nullable = false, length = 500)
     private String content;
 
     public Post(PostRequestDto requestDto, String username) {
         this.title = requestDto.getTitle();
-        this.author = username;
+        this.username = username;
         this.content = requestDto.getContent();
     }
 

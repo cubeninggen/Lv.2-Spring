@@ -1,8 +1,8 @@
 package com.example.blog.jwt;
 
-import com.example.blog.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 
 import org.slf4j.Logger;
@@ -14,8 +14,6 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class JwtUtil {
@@ -45,22 +43,17 @@ public class JwtUtil {
     public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
 
     // 1. JWT(토큰생성)
-    public String createToken(User user) {
+    public String createToken(String username) {
         Date date = new Date();
-
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("username", user.getUsername());
-        claims.put("isAdmin", user.isAdmin()); // isAdmin이라는 메서드가 있다고 가정합니다.
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setClaims(claims)
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME))
-                        .setIssuedAt(date)
-                        .signWith(key, signatureAlgorithm)
+                        .setSubject(username) // 사용자 식별값(ID)
+                        .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 생성 시간에 대한 만료시간
+                        .setIssuedAt(date) // 발급일
+                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
                         .compact();
     }
-
 
     // 2. JWT 토큰을 받아올때 - substring
     public String substringToken(String tokenValue) {
@@ -75,7 +68,7 @@ public class JwtUtil {
     // 3. JWT 검증
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(this.key).build().parseClaimsJws(token); // key로 token 검증
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token); // key로 token 검증
             return true;
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
             logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
@@ -91,14 +84,17 @@ public class JwtUtil {
 
     // 4. JWT에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(this.key).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         // Jwt의 구조중 Payload(Body)부분에 토큰에 담긴 정보가 들어있다.
         // 정보의 한 조각을 클레임이라 부르고 key-value의 한 쌍으로 되어있음. 토큰에는 여러개의 클레임들을 넣을 수 있다.
     }
-
     // 5. 사용자가 관리자인지 확인
     public boolean isAdmin(String token) {
         Claims claims = getUserInfoFromToken(token);
-        return claims.containsKey("isAdmin") && (boolean) claims.get("isAdmin");
+        Object isAdminClaim = claims.get("isAdmin");
+        if (isAdminClaim instanceof Boolean) {
+            return (Boolean) isAdminClaim;
+        }
+        return false;
     }
 }

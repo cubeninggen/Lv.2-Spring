@@ -4,9 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 
-@Setter
-@Getter
-public class LoginRequestDto {
+    @Getter
+    @Setter
+    public class LoginRequestDto {
     private String username;
     private String password;
-}
+
+        public LoginRequestDto() {
+
+        }
+    }
