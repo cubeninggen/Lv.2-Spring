@@ -11,10 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -28,7 +29,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public ResponseEntity<MessageResponseDto> createUser(@RequestBody SignUpRequestDto signUpRequestDto) {
+    public ResponseEntity<MessageResponseDto> createUser(SignUpRequestDto signUpRequestDto) {
         String username = signUpRequestDto.getUsername();
         String password = signUpRequestDto.getPassword();
 
@@ -45,9 +46,6 @@ public class UserService {
         return ResponseEntity.ok().body(new MessageResponseDto("회원가입 성공!", HttpStatus.OK.toString()));
     }
 
-
-
-    @PostMapping("/login")
     public ResponseEntity<MessageResponseDto> loginUser(LoginRequestDto loginRequestDto) {
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
@@ -68,7 +66,13 @@ public class UserService {
         }
 
         // JWT 생성
-        String token = jwtUtil.createToken(username);
+        Set<User.Role> roles = user.getRoles();
+        List<String> roleStrings = roles.stream()
+                .map(Enum::name)
+                .collect(Collectors.toList());
+
+        String token = jwtUtil.createToken(username, roleStrings);
+
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(JwtUtil.AUTHORIZATION_HEADER, token);
@@ -87,23 +91,5 @@ public class UserService {
     public User getUserByUsername(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         return userOptional.orElseThrow(() -> new IllegalArgumentException("사용자가 없습니다."));
-    }
-
-
-    public void grantAdminRole(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
-
-        // ADMIN 권한 부여
-        user.getRoles().add(User.Role.ADMIN);
-
-        userRepository.save(user);
-    }
-
-    public boolean hasRole(Long userId, User.Role role) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
-
-        return user.getRoles().contains(role);
     }
 }

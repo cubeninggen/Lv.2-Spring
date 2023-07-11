@@ -6,23 +6,30 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 
-//@Setter
 @Entity
 @Getter
 @Setter
 @Table(name = "post")
 @NoArgsConstructor
-public class Post extends Timestamped{
+public class Post extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "title", nullable = false)
+
+    @Column(nullable = false)
     private String title;
-    @Column(name = "username", nullable = false)
+
+    @Column(nullable = false)
     private String username;
-    @Column(name = "content", nullable = false, length = 500)
+
+    @Column(nullable = false, length = 500)
     private String content;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 
     public Post(PostRequestDto requestDto, String username) {
         this.title = requestDto.getTitle();

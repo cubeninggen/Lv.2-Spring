@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtUtil {
@@ -43,17 +44,21 @@ public class JwtUtil {
     public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
 
     // 1. JWT(토큰생성)
-    public String createToken(String username) {
+    public String createToken(String username, List<String> roles) {
         Date date = new Date();
+
+        Claims claims = Jwts.claims().setSubject(username);
+        claims.put("roles", roles); // 권한 정보 추가
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(username) // 사용자 식별값(ID)
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 생성 시간에 대한 만료시간
-                        .setIssuedAt(date) // 발급일
-                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                        .setClaims(claims) // 클레임 정보 설정
+                        .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+                        .setIssuedAt(date)
+                        .signWith(key, signatureAlgorithm)
                         .compact();
     }
+
 
     // 2. JWT 토큰을 받아올때 - substring
     public String substringToken(String tokenValue) {
@@ -91,10 +96,8 @@ public class JwtUtil {
     // 5. 사용자가 관리자인지 확인
     public boolean isAdmin(String token) {
         Claims claims = getUserInfoFromToken(token);
-        Object isAdminClaim = claims.get("isAdmin");
-        if (isAdminClaim instanceof Boolean) {
-            return (Boolean) isAdminClaim;
-        }
-        return false;
+        List<String> roles = (List<String>) claims.get("roles");
+        return roles != null && roles.contains("ADMIN");
     }
+
 }

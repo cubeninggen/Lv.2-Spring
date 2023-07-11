@@ -44,7 +44,8 @@ public class User {
     }
 
     public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-        this.isAdmin = roles.contains(Role.ADMIN);
+        this.roles.clear();
+        this.roles.addAll(roles);
+        this.isAdmin = this.roles.contains(Role.ADMIN);
     }
 }

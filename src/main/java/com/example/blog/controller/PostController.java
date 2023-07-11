@@ -1,7 +1,6 @@
 package com.example.blog.controller;
 
 import com.example.blog.dto.*;
-import com.example.blog.jwt.JwtUtil;
 import com.example.blog.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +12,9 @@ import java.util.List;
 @RestController
 public class PostController {
     private final PostService postService;
-    private final JwtUtil jwtUtil;
 
-
-    public PostController(PostService postService, JwtUtil jwtUtil) {
+    public PostController(PostService postService) {
         this.postService = postService;
-        this.jwtUtil = jwtUtil;
     }
 
     // 게시글 목록 조회 API
@@ -42,25 +38,21 @@ public class PostController {
     // 게시글 수정 API
     @PutMapping("/posts/{id}")
     public PostResponseDto updatePost(@RequestHeader("Authorization") String tokenValue, @PathVariable Long id, @RequestBody PostRequestDto requestDto) {
-        return postService.updatePost(tokenValue, id, requestDto);
+        if (postService.hasPermissionForPost(tokenValue, id)) {
+            return postService.updatePost(tokenValue, id, requestDto);
+        } else {
+            throw new IllegalArgumentException("해당 게시물을 수정할 권한이 없습니다.");
+        }
     }
 
     // 게시글 삭제 API
     @DeleteMapping("/posts/{id}")
     public ResponseEntity<MessageResponseDto> deletePost(@RequestHeader("Authorization") String tokenValue, @PathVariable Long id) {
-        String token = jwtUtil.substringToken(tokenValue);
-
-        if (!jwtUtil.validateToken(token)) {
-            throw new IllegalArgumentException("Token Error");
+        if (postService.hasPermissionForPost(tokenValue, id)) {
+            return postService.deletePost(tokenValue, id);
+        } else {
+            throw new IllegalArgumentException("해당 게시물을 삭제할 권한이 없습니다.");
         }
-
-        boolean hasPermission = postService.hasPermission(token,id, id);
-
-        if (!hasPermission) {
-            throw new IllegalArgumentException("게시물 삭제 권한이 없습니다.");
-        }
-
-        return postService.deletePost(tokenValue, id);
     }
 
     // 댓글 작성 API
@@ -72,13 +64,21 @@ public class PostController {
     // 댓글 수정 API
     @PutMapping("/posts/{postId}/comments/{commentId}")
     public CommentResponseDto updateComment(@RequestHeader("Authorization") String tokenValue, @PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentRequestDto requestDto) {
-        return postService.updateComment(tokenValue, commentId, requestDto);
+        if (postService.hasPermissionForComment(tokenValue, commentId)) {
+            return postService.updateComment(tokenValue, commentId, requestDto);
+        } else {
+            throw new IllegalArgumentException("해당 댓글을 수정할 권한이 없습니다.");
+        }
     }
 
     // 댓글 삭제 API
     @DeleteMapping("/posts/{postId}/comments/{commentId}")
     public ResponseEntity<MessageResponseDto> deleteComment(@RequestHeader("Authorization") String tokenValue, @PathVariable Long postId, @PathVariable Long commentId) {
-        return postService.deleteComment(tokenValue, postId, commentId);
+        if (postService.hasPermissionForComment(tokenValue, commentId)) {
+            return postService.deleteComment(tokenValue, postId, commentId);
+        } else {
+            throw new IllegalArgumentException("해당 댓글을 삭제할 권한이 없습니다.");
+        }
     }
 
     // 예외 처리
@@ -86,5 +86,4 @@ public class PostController {
     public ResponseEntity<MessageResponseDto> handleIllegalArgumentException(IllegalArgumentException e) {
         return new ResponseEntity<>(new MessageResponseDto(e.getMessage(), "401"), HttpStatus.UNAUTHORIZED);
     }
-
 }
