@@ -49,7 +49,7 @@ Content-Type: application/json
 POST /api/posts HTTP/1.1
 Host: localhost:8080
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJreXVuaTk3ODEiLCJleHAiOjE2ODkwNDc3ODEsImlhdCI6MTY4OTA0NDE4MX0.6Hti-cY7ojmu70-oG9I9xvnxnoxraic11wx3c1SBWyY
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEyNSIsImV4cCI6MTY4OTA1NTg1MiwiaWF0IjoxNjg5MDUyMjUyfQ.qgcxBh4fuAK1upJdoq50tyIIAbvFrcMFQy1WdFXifnU
 
 {
   "title": "title1",
@@ -77,10 +77,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc0FkbWluIjpmYWxzZSwidXNlcm5hbWUiO
 }
 
 ### 게시물 삭제
-DELETE /api/posts/2 HTTP/1.1
+DELETE /api/posts/3 HTTP/1.1
 Host: localhost:8080
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJreXVuaTk3ODEiLCJleHAiOjE2ODkwNDc3ODEsImlhdCI6MTY4OTA0NDE4MX0.6Hti-cY7ojmu70-oG9I9xvnxnoxraic11wx3c1SBWyY
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEyNSIsImV4cCI6MTY4OTA1NTg1MiwiaWF0IjoxNjg5MDUyMjUyfQ.qgcxBh4fuAK1upJdoq50tyIIAbvFrcMFQy1WdFXifnU
 
 
 ### 댓글 작성

@@ -3,7 +3,6 @@ package com.example.blog.service;
 import com.example.blog.dto.*;
 import com.example.blog.entity.Comment;
 import com.example.blog.entity.Post;
-import com.example.blog.entity.User;
 import com.example.blog.jwt.JwtUtil;
 import com.example.blog.repository.CommentRepository;
 import com.example.blog.repository.PostRepository;
@@ -215,6 +214,29 @@ public class PostService {
     private Comment findCommentById(Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("선택한 댓글이 존재하지 않습니다."));
+    }
+
+    public boolean hasPermission(String token, Long postId, Long commentId) {
+        Claims claims = jwtUtil.getUserInfoFromToken(token);
+        String username = claims.getSubject();
+        boolean isAdmin = jwtUtil.isAdmin(token);
+
+        // 관리자는 모든 권한을 가지고 있음
+        if (isAdmin) {
+            return true;
+        }
+
+        // 게시물의 작성자와 현재 사용자가 일치하는 경우
+        if (postRepository.existsByIdAndUsername(postId, username)) {
+            return true;
+        }
+        // 댓글의 작성자와 현재 사용자가 일치하는 경우
+        if (commentRepository.existsByIdAndUsername(commentId, username)) {
+            return true;
+        }
+
+        // 권한이 없는 경우 false를 반환합니다.
+        return false;
     }
 
 

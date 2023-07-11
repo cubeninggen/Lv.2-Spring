@@ -1,6 +1,7 @@
 package com.example.blog.controller;
 
 import com.example.blog.dto.*;
+import com.example.blog.jwt.JwtUtil;
 import com.example.blog.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,12 @@ import java.util.List;
 @RestController
 public class PostController {
     private final PostService postService;
+    private final JwtUtil jwtUtil;
 
-    public PostController(PostService postService) {
+
+    public PostController(PostService postService, JwtUtil jwtUtil) {
         this.postService = postService;
-
+        this.jwtUtil = jwtUtil;
     }
 
     // 게시글 목록 조회 API
@@ -45,6 +48,18 @@ public class PostController {
     // 게시글 삭제 API
     @DeleteMapping("/posts/{id}")
     public ResponseEntity<MessageResponseDto> deletePost(@RequestHeader("Authorization") String tokenValue, @PathVariable Long id) {
+        String token = jwtUtil.substringToken(tokenValue);
+
+        if (!jwtUtil.validateToken(token)) {
+            throw new IllegalArgumentException("Token Error");
+        }
+
+        boolean hasPermission = postService.hasPermission(token,id, id);
+
+        if (!hasPermission) {
+            throw new IllegalArgumentException("게시물 삭제 권한이 없습니다.");
+        }
+
         return postService.deletePost(tokenValue, id);
     }
 
