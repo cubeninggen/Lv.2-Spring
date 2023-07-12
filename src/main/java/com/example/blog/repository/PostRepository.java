@@ -9,5 +9,6 @@ import java.util.List;
 //JpaRepository를 상속받으면 자동으로 빈 등록 가능
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByOrderByCreatedAtDesc();
+    // 전체 게시물 조회
 
 }

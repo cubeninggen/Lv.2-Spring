@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
+// 댓글 DB 저장값 -> DB와 매핑된다.
 @Entity
 @Getter
 @Setter

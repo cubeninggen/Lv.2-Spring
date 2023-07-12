@@ -2,9 +2,9 @@ package com.example.blog.dto;
 
 import com.example.blog.entity.Comment;
 import lombok.Getter;
-
 import java.time.LocalDateTime;
 
+// 댓글 저장 및 반환 DTO
 @Getter
 public class CommentResponseDto {
     private Long id;

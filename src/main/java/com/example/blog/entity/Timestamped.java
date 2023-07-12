@@ -8,8 +8,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+
+// POST 및 Comment 에 상속되어 기능작용 ( 추상 클래스 )
 @Getter
-@MappedSuperclass
+@MappedSuperclass // DB와 매핑되지 않음
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Timestamped {
 

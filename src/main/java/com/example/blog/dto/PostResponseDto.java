@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+// 게시물 요청 및 반환 DTO
 @Getter
 public class PostResponseDto {
     private Long id;

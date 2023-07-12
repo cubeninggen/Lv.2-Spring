@@ -16,6 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+
+// Service = Controller 및 데이터 엑세스 계층과 Repository 사이의 중간다리 역할
+// 1. Service 클래스는 Repository 를 주입받아 데이터베이스와의 상호작용
+// 2. 비즈니스 로직 수행 ( CRUD )
+// 3. 다른 클래스와의 협업 관리, 예외처리, 트랜잭션 관리 등등
 @Service
 public class PostService {
 

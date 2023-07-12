@@ -79,15 +79,15 @@ public class UserService {
 
         return new ResponseEntity<>(new MessageResponseDto("로그인 성공!", HttpStatus.OK.toString()), headers, HttpStatus.OK);
     }
-
+    // 사용자명(username)이 데이터베이스에 존재하는지 확인
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
-
+    // 새로운 사용자를 생성하여 데이터베이스에 저장
     public void createUser(User user) {
         userRepository.save(user);
     }
-
+    //  사용자명(username)에 해당하는 사용자를 가져옴 
     public User getUserByUsername(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         return userOptional.orElseThrow(() -> new IllegalArgumentException("사용자가 없습니다."));

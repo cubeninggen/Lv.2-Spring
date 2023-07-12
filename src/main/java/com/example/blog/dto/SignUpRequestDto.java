@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.util.Set;
 
+// 회원가입 요청 DTO // 상태값만 반환하면 되기에 Response 는 필요 X // 로그인도 마찬가지
 @Getter
 public class SignUpRequestDto {
     @Pattern(regexp = "[a-z0-9]{4,10}")

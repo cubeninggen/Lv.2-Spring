@@ -2,6 +2,8 @@ package com.example.blog.dto;
 
 import lombok.Getter;
 
+
+// 응답 관련 DTO
 @Getter
 public class MessageResponseDto {
     private String message;

@@ -64,7 +64,7 @@ public class JwtUtil {
     public String substringToken(String tokenValue) {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             // 토큰이 공백이 아닌 Bearer 로 시작할 때
-            return tokenValue.substring(7); // 자르는 시작점
+            return tokenValue.substring(7); // 7번째 요소에서 시작
         }
         logger.error("토큰을 찾을 수 없습니다.");
         throw new NullPointerException("토큰을 찾을 수 없습니다.");

@@ -9,6 +9,8 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+
+// 게시글 DB 저장값
 @Entity
 @Getter
 @Setter

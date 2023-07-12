@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// 게시물 관련 Controller
 @RequestMapping("/api")
 @RestController
 public class PostController {

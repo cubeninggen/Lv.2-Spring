@@ -8,6 +8,8 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
+
+// 회원 DB 저장값
 @Entity
 @Table(name = "user")
 @Getter
