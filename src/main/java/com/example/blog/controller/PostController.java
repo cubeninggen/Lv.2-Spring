@@ -61,7 +61,7 @@ public class PostController {
         return postService.createComment(tokenValue, postId, requestDto);
     }
 
-    // 댓글 수정 API
+    // 댓글 수정 APIw
     @PutMapping("/posts/{postId}/comments/{commentId}")
     public CommentResponseDto updateComment(@RequestHeader("Authorization") String tokenValue, @PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentRequestDto requestDto) {
         if (postService.hasPermissionForComment(tokenValue, commentId)) {

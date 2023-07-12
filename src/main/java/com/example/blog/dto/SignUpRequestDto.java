@@ -3,12 +3,10 @@ package com.example.blog.dto;
 import com.example.blog.entity.User;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Set;
 
 @Getter
-@Setter
 public class SignUpRequestDto {
     @Pattern(regexp = "[a-z0-9]{4,10}")
     private String username;

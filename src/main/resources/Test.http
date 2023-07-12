@@ -5,7 +5,7 @@ Host: localhost:8080
 Content-Type: application/json
 
 {
-  "username": "admin9785",
+  "username": "admin9783",
   "password": "abcd1234",
   "roles": ["ADMIN"]
 }
@@ -49,7 +49,7 @@ Content-Type: application/json
 POST /api/posts HTTP/1.1
 Host: localhost:8080
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJreXVuaTk3ODYiLCJyb2xlcyI6WyJVU0VSIl0sImV4cCI6MTY4OTA3MjA2MCwiaWF0IjoxNjg5MDY4NDYwfQ.vc_dkXnBA2J76eaN_plgjiTtz1ahE2-mxvLYOjItWDI
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJreXVuaTk3ODYiLCJyb2xlcyI6WyJVU0VSIl0sImV4cCI6MTY4OTEzMjk3NiwiaWF0IjoxNjg5MTI5Mzc2fQ.5Vx0ccxfVhocV9KTwJtBpbZJ5zIMawd5KaKbSjbJzNE
 
 {
   "title": "title1",
@@ -65,10 +65,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJreXVuaTk3ODYiLCJleHAiOjE2O
 
 
 ### 게시물 수정
-PUT /api/posts/3 HTTP/1.1
+PUT /api/posts/4 HTTP/1.1
 Host: localhost:8080
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjk3ODUiLCJyb2xlcyI6WyJBRE1JTiJdLCJleHAiOjE2ODkwNzMyMDksImlhdCI6MTY4OTA2OTYwOX0.dV75PlFweBWpC3B12SsSZpaoyUaBIwS-c9wDhDDNCG4
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjk3ODUiLCJyb2xlcyI6WyJBRE1JTiJdLCJleHAiOjE2ODkxMzI5OTcsImlhdCI6MTY4OTEyOTM5N30.ur_xO5LDEtqX1N7_J4F6YoaWfCdzUSyQOe0zuLrtiFI
 
 
 {
@@ -77,17 +77,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjk3ODUiLCJyb2xlcyI6W
 }
 
 ### 게시물 삭제
-DELETE /api/posts/2 HTTP/1.1
+DELETE /api/posts/4 HTTP/1.1
 Host: localhost:8080
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjk3ODUiLCJyb2xlcyI6WyJBRE1JTiJdLCJleHAiOjE2ODkwNzI5MTAsImlhdCI6MTY4OTA2OTMxMH0.bBvRZowdR21RlYUQ-FEUW2AnbQVSO3qzGq-1MnoJQWQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjk3ODUiLCJyb2xlcyI6WyJBRE1JTiJdLCJleHAiOjE2ODkxMzI5OTcsImlhdCI6MTY4OTEyOTM5N30.ur_xO5LDEtqX1N7_J4F6YoaWfCdzUSyQOe0zuLrtiFI
 
 
 ### 댓글 작성
 POST /api/posts/3/comments
 Host: localhost:8080
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJreXVuaTk3ODYiLCJyb2xlcyI6WyJVU0VSIl0sImV4cCI6MTY4OTA3MzE1NSwiaWF0IjoxNjg5MDY5NTU1fQ.UBXJ3FI3H6NehUh5Cl-gktYbB6CAxBTMiWpwjB9neek
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjk3ODUiLCJyb2xlcyI6WyJBRE1JTiJdLCJleHAiOjE2ODkxMzI5OTcsImlhdCI6MTY4OTEyOTM5N30.ur_xO5LDEtqX1N7_J4F6YoaWfCdzUSyQOe0zuLrtiFI
 
 {
   "content": "안녕하세요"
@@ -97,7 +97,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJreXVuaTk3ODYiLCJyb2xlcyI6W
 PUT /api/posts/1/comments/1
 Host: localhost:8080
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJreXVuaTk3ODYiLCJleHAiOjE2ODkwNjMzOTEsImlhdCI6MTY4OTA1OTc5MX0.aBaB4zu7LGk-N5uLNkhAnOo6RwLQ7myPkcTC0nw6TPQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjk3ODUiLCJyb2xlcyI6WyJBRE1JTiJdLCJleHAiOjE2ODkwODEwNzIsImlhdCI6MTY4OTA3NzQ3Mn0.PJOVKTyN_SgkNB0fOFXeOfhGBPK7aDbt1HOOUNV_uD0
 
 {
   "content": "수정된 댓글 내용"
